@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 import {  useEffect, useState } from 'react';
 import { motion } from 'motion/react';
+import { EventEmitter } from 'stream';
 
 interface SearchbarProps {
   currencyCount: number,
@@ -96,7 +97,9 @@ export default function CurrencyConverter() {
     makeDataAPIRequests();
   }, [])
 
-  
+  // If currencyvalue contains an actual number, then do the below requiest
+  // otherwise throw error and alert user.
+ // if ()
   async function makeCurrencyAPIRequest()  {
       console.log(EXCHANGE_API_KEY)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
@@ -110,8 +113,8 @@ export default function CurrencyConverter() {
       })
     // else {
       // Handling here or elsewhere for invalid numbers? :o
-      alert("Please enter a search term!")
-   // }
+      //alert("Please enter a search term!")
+    //}
   }
 
   async function makeDataAPIRequests() {
@@ -130,9 +133,9 @@ export default function CurrencyConverter() {
     setSelectedCountry(value)
   }
 
-  // const handleInputChange = (event: any) => {
-  //   InputGifSearch(event.target.value)
-  // }
+  const handleInputChange = (event: any) => {
+    console.log(event.target.value)
+  }
   
   const inputListener = document.getElementById('currencyInput')
   inputListener?.addEventListener("keypress", (e) => {
@@ -148,19 +151,19 @@ export default function CurrencyConverter() {
         <StyledInput 
           type="number"
           id="currencyInput" 
-          //onChange={handleInputChange}
+          onChange={handleInputChange}
           maxLength={10}
         >
 
         </StyledInput>
           <StyledSelect onChange={updateSelectedCountry}>
             {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
-            <option value={item}>{currencyData[item]} {item}</option>
+            <option value={item}>{item} {currencyData[item]} </option>
             ))}
           </StyledSelect>
           <StyledSelect >
             {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
-            <option value={item}>{currencyData[item]} {item}</option>
+            <option value={item}>{item} {currencyData[item]} </option>
             ))}
         </StyledSelect>
       </CurrencyItemDiv>
@@ -168,8 +171,6 @@ export default function CurrencyConverter() {
           <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton">Convert</StyledButton>
         </div>
         <CurrencyReturnDiv>
-          <p>p</p>
-          <p>asdas</p>
         </CurrencyReturnDiv>
     </>
   )
