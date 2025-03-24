@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import {  useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 
 interface SearchbarProps {
@@ -77,35 +77,58 @@ const CurrencyItemDiv = styled(motion.div)`
   display: flex;
 `
 
-//const API_KEY = process.env.REACT_APP_GIPHY_KEY
+const CurrencyReturnDiv = styled(motion.div)`
+  .custom-pattern {
+	background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, #1A8FE5 80px, #1A8FE5 160px);
+	background-color: #E4E4ED;
+}
+`
+
+const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 
 export default function CurrencyConverter() {
-  //const [inputGifSearch, setInputGifSearch] = useState('')
+  const [currencyData, setCurrencyData] = useState<any>({})
+  const [selectedCountry, setSelectedCountry] = useState("USD")
 
-  // This function handles making request to GIPHY API, and returning a data object that is then used by the GifDivContainer
-  async function makeAPIRequest()  {
-    // if (inputGifSearch){
-    //   const countryFetchRequest = `https://openexchangerates.org/api/currencies.json`
-    //    console.log(countryFetchRequest)
-    //   await fetch(countryFetchRequest)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log(data)
-    //     // This function below must be changed to 'setCurrencyValue' and passed to parent.
-    //     //setCurrency(data)
-    //   })
-    // }
+  // On page load, make the below API requests to get data to populate various arrays
+  // 
+  useEffect(() => {
+    makeDataAPIRequests();
+  }, [])
+
+  
+  async function makeCurrencyAPIRequest()  {
+      console.log(EXCHANGE_API_KEY)
+      const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
+      console.log(countryFetchRequest)
+      await fetch(countryFetchRequest)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        // This function below must be changed to 'setCurrencyValue' and passed to parent.
+        
+      })
     // else {
       // Handling here or elsewhere for invalid numbers? :o
       alert("Please enter a search term!")
    // }
   }
 
-  // const updateGifCounter = (event: any) => {
-  //   const value = event.target.value
-  //   // console.log("value in dropdown changed to ", value)
-  //   setGifCount(value)
-  // }
+  async function makeDataAPIRequests() {
+    const currencyOptionsRequestUrl = `https://openexchangerates.org/api/currencies.json`
+    await fetch(currencyOptionsRequestUrl)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      setCurrencyData(data)
+    })
+  }
+  
+  const updateSelectedCountry = (event: any) => {
+    const value = event.target.value
+     console.log("value in dropdown changed to ", value)
+    setSelectedCountry(value)
+  }
 
   // const handleInputChange = (event: any) => {
   //   InputGifSearch(event.target.value)
@@ -127,19 +150,27 @@ export default function CurrencyConverter() {
           id="currencyInput" 
           //onChange={handleInputChange}
           maxLength={10}
-        ></StyledInput>
-        <StyledSelect>
-          
-          <option value='GBP'>GBP</option>
-        </StyledSelect>
-        <StyledSelect>
-          
-          <option value='GBP'>GBP</option>
+        >
+
+        </StyledInput>
+          <StyledSelect onChange={updateSelectedCountry}>
+            {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
+            <option value={item}>{currencyData[item]} {item}</option>
+            ))}
+          </StyledSelect>
+          <StyledSelect >
+            {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
+            <option value={item}>{currencyData[item]} {item}</option>
+            ))}
         </StyledSelect>
       </CurrencyItemDiv>
         <div>
-          <StyledButton onClick={makeAPIRequest} id="inputButton">Convert</StyledButton>
-      </div>
+          <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton">Convert</StyledButton>
+        </div>
+        <CurrencyReturnDiv>
+          <p>p</p>
+          <p>asdas</p>
+        </CurrencyReturnDiv>
     </>
   )
 }
