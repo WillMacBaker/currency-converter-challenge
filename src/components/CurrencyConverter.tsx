@@ -90,18 +90,55 @@ const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 export default function CurrencyConverter() {
   const [currencyData, setCurrencyData] = useState<any>({})
   const [selectedCountry, setSelectedCountry] = useState("USD")
-
+  //const [firstSelectedCountry, setFirstSelectedCountry] = useState()
+  //const [secondCurrencyu]
   // On page load, make the below API requests to get data to populate various arrays
   // 
   useEffect(() => {
     makeDataAPIRequests();
   }, [])
 
+
+  /* 
+  1. Create an input that will sanitise and error out if a non-valid number is entered
+  2. A button that will switch the 2 selected currency values (always convert the first currency to the second one!)
+    This will involve switching the selected items in each box. Both use same list, so ought to work...
+
+  3. Create reusable dropdown component
+    // Dropdown will have all available currencies from api <DONE>
+    3a. Dropdown will include a search input for user to filter out options
+    3b. Search input will require correct validation if no record is found (regex + error handling?)
+    3c. Images loaded and shown on the side of the currency
+  
+  4. Convert button
+    4a. Conversion button will convert amount entered, and display it below in string format "VALUE first currency is equal to VALUE second currency
+    4b. A countdown timer starting from 10 00, and once counted down, then show the conversion result, hiding the timer once the value hits 0
+
+  Application should be written in react BONUS if in typescript
+  README should detail how to run and use the application
+  There should be UNIT TESTS (use Chai testing here)
+  Application should be tested in chrome, but also test in IE11, Firefox, Safari
+  Add other things as appropriate. (Background flag design changes based on currency selected?
+
+  Code should be clean, modular and extensible, being responsive and accessible
+  
+  )
+  */
+
+  // Country flag api 
+  // https://flagpedia.net/download/api
+
+  // Country full name
+  // https://openexchangerates.org/api/currencies.json
+
+  // Regex for currency 
+  // ^\$(0|[1-9][0-9]{0,2})(,\d{3})*(\.\d{1,2})?$
+  // taken from  https://regexr.com/3ivk1
+
   // If currencyvalue contains an actual number, then do the below requiest
   // otherwise throw error and alert user.
  // if ()
   async function makeCurrencyAPIRequest()  {
-      console.log(EXCHANGE_API_KEY)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
       console.log(countryFetchRequest)
       await fetch(countryFetchRequest)
@@ -122,7 +159,7 @@ export default function CurrencyConverter() {
     await fetch(currencyOptionsRequestUrl)
     .then(response => response.json())
     .then(data => {
-      console.log(data)
+      console.log("currencyData: ", data)
       setCurrencyData(data)
     })
   }
@@ -156,14 +193,14 @@ export default function CurrencyConverter() {
         >
 
         </StyledInput>
-          <StyledSelect onChange={updateSelectedCountry}>
-            {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
-            <option value={item}>{item} {currencyData[item]} </option>
+        <StyledSelect onChange={updateSelectedCountry}>
+            {Object.keys(currencyData)?.map((item?:any) => (
+            <option value={item} key={item}>{item} {currencyData[item]} </option>
             ))}
-          </StyledSelect>
-          <StyledSelect >
-            {Object.keys(currencyData)?.map((item?:any, item2?:any) => (
-            <option value={item}>{item} {currencyData[item]} </option>
+        </StyledSelect>
+        <StyledSelect onChange={updateSelectedCountry}>
+            {Object.keys(currencyData)?.map((item?:any) => (
+            <option value={item} key={item}>{item} {currencyData[item]} </option>
             ))}
         </StyledSelect>
       </CurrencyItemDiv>
