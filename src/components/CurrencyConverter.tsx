@@ -63,6 +63,8 @@ const StyledInput = styled.input`
   &:invalid {
     border: 5px solid red;
   }
+
+  
   }
 `
 
@@ -98,17 +100,23 @@ const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 
 export default function CurrencyConverter() {
   const [currencyData, setCurrencyData] = useState<any>({})
+  const [currencyValue, setCurrencyValue] = useState<Number>()
   const [selectedCountry, setSelectedCountry] = useState("USD")
+  const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
 
   //const [firstSelectedCountry, setFirstSelectedCountry] = useState()
   //const [secondCurrencyu]
+
   // On page load, make the below API requests to get data to populate various arrays
   // `
   useEffect(() => {
     makeDataAPIRequests()
   }, [])
 
+  useEffect(() => {
+    console.log(currencyValue)
+  }, [currencyValue])
 
   /* 
   1. Create an input that will sanitise and error out if a non-valid number is entered
@@ -151,7 +159,7 @@ export default function CurrencyConverter() {
  // if ()
 
   const sanitiseInput = (inputString: string) => {
-    const currencyInputRegex = /(?:^[1-9]([0-9]+)?(?:\.[0-9]{1,2})?$)|(?:^(?:0)$)|(?:^[0-9]\.[0-9](?:[0-9])?$)/
+    const currencyInputRegex = /^\s*-?\d+(\.\d{1,2})?\s*$/
     if (inputString.match(currencyInputRegex)){
       return true;
     } else {
@@ -160,7 +168,6 @@ export default function CurrencyConverter() {
   }
 
   async function makeCurrencyAPIRequest()  {
-      //let regexCheck = sanitiseInput()
       console.log('First country selected is: ', selectedCountry, ' and second selected country is ', secondSelectedCountry)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
       await fetch(countryFetchRequest)
@@ -208,7 +215,18 @@ export default function CurrencyConverter() {
   }
 
   const handleInputChange = (event: any) => {
-    console.log("he")
+    const value = event.target.value
+    let regexCheck = sanitiseInput(value)
+    if (regexCheck === true){
+      console.log("value entered into currency field is ", value)
+      setErrorFlag(false)
+      console.log(errorFlag)
+    setCurrencyValue(value)
+    } else if (regexCheck === false && (value !== '')) {
+      console.log("The value ",value , " is invalid!")
+      setErrorFlag(true);
+      console.log(errorFlag)
+    }
   }
   
   const inputListener = document.getElementById('currencyInput')
@@ -231,6 +249,10 @@ export default function CurrencyConverter() {
           >
           </StyledInput>
           <StyledButton onClick={swapCountry} id="">Swap</StyledButton>
+          { errorFlag && 
+            <p>That is not a valid number, please make sure to provide a valid input</p>
+          }
+
         </div>
         <div>
           <StyledSelect onChange={updateSelectedCountry} value={selectedCountry}>
