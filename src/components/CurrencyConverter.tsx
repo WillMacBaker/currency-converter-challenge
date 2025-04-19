@@ -55,15 +55,23 @@ const StyledInput = styled.input`
   border: 4px solid #000;
   position: relative;
   box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+
+  &:focus{
+   // outline: 1px solid #E8793F;
+    box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+
+  &:invalid {
+    border: 5px solid red;
+  }
+  }
 `
 
 const StyledSelect = styled.select`
   position: relative;
   padding: 1rem;
   margin: 1rem;
-  width: 250px;
+  width: 400px;
   font-family: monospace;
-  width: 250px;
   padding: 15px;
   font-size: 18px;
   font-weight: bold;
@@ -76,6 +84,7 @@ const StyledSelect = styled.select`
 
 const CurrencyItemDiv = styled(motion.div)`
   display: flex;
+  max-width: 80%;
 `
 
 const CurrencyReturnDiv = styled(motion.div)`
@@ -90,12 +99,14 @@ const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 export default function CurrencyConverter() {
   const [currencyData, setCurrencyData] = useState<any>({})
   const [selectedCountry, setSelectedCountry] = useState("USD")
+  const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
+
   //const [firstSelectedCountry, setFirstSelectedCountry] = useState()
   //const [secondCurrencyu]
   // On page load, make the below API requests to get data to populate various arrays
-  // 
+  // `
   useEffect(() => {
-    makeDataAPIRequests();
+    makeDataAPIRequests()
   }, [])
 
 
@@ -138,15 +149,25 @@ export default function CurrencyConverter() {
   // If currencyvalue contains an actual number, then do the below requiest
   // otherwise throw error and alert user.
  // if ()
+
+  const sanitiseInput = (inputString: string) => {
+    const currencyInputRegex = /(?:^[1-9]([0-9]+)?(?:\.[0-9]{1,2})?$)|(?:^(?:0)$)|(?:^[0-9]\.[0-9](?:[0-9])?$)/
+    if (inputString.match(currencyInputRegex)){
+      return true;
+    } else {
+      return false
+    } 
+  }
+
   async function makeCurrencyAPIRequest()  {
+      //let regexCheck = sanitiseInput()
+      console.log('First country selected is: ', selectedCountry, ' and second selected country is ', secondSelectedCountry)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
-      console.log(countryFetchRequest)
       await fetch(countryFetchRequest)
       .then(response => response.json())
       .then(data => {
         console.log(data)
         // This function below must be changed to 'setCurrencyValue' and passed to parent.
-        
       })
     // else {
       // Handling here or elsewhere for invalid numbers? :o
@@ -164,14 +185,30 @@ export default function CurrencyConverter() {
     })
   }
   
+  // Updates and swaps the two state variable values containing selected countries
+  const swapCountry = (event: any) => {
+    let swap1, swap2
+    swap1 = selectedCountry
+    swap2 = secondSelectedCountry
+    console.log("first country before swap: ", selectedCountry, " second country: ", secondSelectedCountry)
+    setSelectedCountry(swap2)
+    setSecondSelectedCountry(swap1)
+  }
+
   const updateSelectedCountry = (event: any) => {
     const value = event.target.value
-     console.log("value in dropdown changed to ", value)
+    console.log("value in dropdown changed to ", value)
     setSelectedCountry(value)
   }
 
+  const updateSecondSelectedCountry = (event: any) => {
+    const value = event.target.value
+    console.log("value in second dropdown changed to ", value)
+    setSecondSelectedCountry(value)
+  }
+
   const handleInputChange = (event: any) => {
-    console.log(event.target.value)
+    console.log("he")
   }
   
   const inputListener = document.getElementById('currencyInput')
@@ -185,30 +222,35 @@ export default function CurrencyConverter() {
   return (
     <>
       <CurrencyItemDiv>
-        <StyledInput 
-          type="number"
-          id="currencyInput" 
-          onChange={handleInputChange}
-          maxLength={10}
-        >
-
-        </StyledInput>
-        <StyledSelect onChange={updateSelectedCountry}>
-            {Object.keys(currencyData)?.map((item?:any) => (
-            <option value={item} key={item}>{item} {currencyData[item]} </option>
-            ))}
-        </StyledSelect>
-        <StyledSelect onChange={updateSelectedCountry}>
-            {Object.keys(currencyData)?.map((item?:any) => (
-            <option value={item} key={item}>{item} {currencyData[item]} </option>
-            ))}
-        </StyledSelect>
+        <div>
+          <StyledInput
+            type="number"
+            id="currencyInput" 
+            onChange={handleInputChange}
+            maxLength={10}
+          >
+          </StyledInput>
+          <StyledButton onClick={swapCountry} id="">Swap</StyledButton>
+        </div>
+        <div>
+          <StyledSelect onChange={updateSelectedCountry} value={selectedCountry}>
+              {Object.keys(currencyData)?.map((item?:any) => (
+              <option value={item} key={item}>{item} {currencyData[item]} </option>
+              ))}
+          </StyledSelect>
+          <StyledSelect onChange={updateSecondSelectedCountry} value={secondSelectedCountry}>
+              {Object.keys(currencyData)?.map((item?:any) => (
+              <option value={item} key={item}>{item} {currencyData[item]} </option>
+              ))}
+          </StyledSelect>
+        </div>
       </CurrencyItemDiv>
         <div>
           <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton">Convert</StyledButton>
         </div>
+        
         <CurrencyReturnDiv>
         </CurrencyReturnDiv>
     </>
   )
-}
+  }
