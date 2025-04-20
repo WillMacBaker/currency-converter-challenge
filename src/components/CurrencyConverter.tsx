@@ -60,9 +60,9 @@ const StyledInput = styled.input`
    // outline: 1px solid #E8793F;
     box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
 
-  &:invalid {
+  /* &:invalid {
     border: 5px solid red;
-  }
+  } */
 
   
   }
@@ -100,7 +100,7 @@ const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 
 export default function CurrencyConverter() {
   const [currencyData, setCurrencyData] = useState<any>({})
-  const [currencyValue, setCurrencyValue] = useState<Number>()
+  const [currencyValue, setCurrencyValue] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("USD")
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
@@ -115,7 +115,7 @@ export default function CurrencyConverter() {
   }, [])
 
   useEffect(() => {
-    console.log(currencyValue)
+    
   }, [currencyValue])
 
   /* 
@@ -218,15 +218,14 @@ export default function CurrencyConverter() {
     const value = event.target.value
     let regexCheck = sanitiseInput(value)
     if (regexCheck === true){
-      console.log("value entered into currency field is ", value)
       setErrorFlag(false)
       console.log(errorFlag)
-    setCurrencyValue(value)
-    } else if (regexCheck === false && (value !== '')) {
-      console.log("The value ",value , " is invalid!")
-      setErrorFlag(true);
-      console.log(errorFlag)
+      setCurrencyValue(value)
+    } else if (regexCheck === false) {
+      setErrorFlag(true)
+      setCurrencyValue(value)
     }
+    console.log("initial regexCheck returns  ", regexCheck, " with a value of ", value, " errorflag has been set to ", errorFlag)
   }
   
   const inputListener = document.getElementById('currencyInput')
@@ -242,15 +241,15 @@ export default function CurrencyConverter() {
       <CurrencyItemDiv>
         <div>
           <StyledInput
-            type="number"
             id="currencyInput" 
             onChange={handleInputChange}
             maxLength={10}
+
           >
           </StyledInput>
           <StyledButton onClick={swapCountry} id="">Swap</StyledButton>
           { errorFlag && 
-            <p>That is not a valid number, please make sure to provide a valid input</p>
+            <p>{currencyValue} is not a valid number, please make sure to provide a valid input</p>
           }
 
         </div>
