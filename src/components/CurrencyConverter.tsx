@@ -12,7 +12,7 @@ interface SearchbarProps {
 }
 
 
-const StyledButton= styled(motion.button)`
+const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
   margin-top: 1rem;
   position: relative;
   width: 250px;
@@ -23,11 +23,17 @@ const StyledButton= styled(motion.button)`
   font-weight: bold;
   color: #000;
   background-color: #fff;
-  border: 4px solid #000;
+  border: ${props =>
+  props.activeFlag? '5px solid red' 
+  :
+  '4px solid #000'};
   position: relative;
   border-radius: 30px;
   outline: none;
   box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+
+  
+  
 
   &:hover {
     background-color: #4a90e2;
@@ -38,6 +44,8 @@ const StyledButton= styled(motion.button)`
     transform: translate(3px, 3px);
     box-shadow: 5px 5px 0 #E8793F;
   }
+
+
 
 `
 const StyledSquareButton = styled(motion.button)`
@@ -88,15 +96,13 @@ const StyledInput = styled.input`
    // outline: 1px solid #E8793F;
     box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
 
-  /* &:invalid {
+  &:invalid {
     border: 5px solid red;
-  } */
+  }
 
   
   }
 `
-
-
 
 const CurrencyItemDiv = styled(motion.div)`
   display: flex;
@@ -129,7 +135,6 @@ export default function CurrencyConverter() {
   useEffect(() => {
     
   }, [currencyValue])
-
   /* 
 
   3. Create reusable dropdown component
@@ -167,6 +172,9 @@ export default function CurrencyConverter() {
   // otherwise throw error and alert user.
  // if ()
 
+
+  // Function here returns a true or false boolean, depending on result
+  // of checking inputString against regex variable.
   const sanitiseInput = (inputString: string) => {
     const currencyInputRegex = /^\s*-?\d+(\.\d{1,2})?\s*$/
     if (inputString.match(currencyInputRegex)){
@@ -176,6 +184,8 @@ export default function CurrencyConverter() {
     } 
   }
 
+  // When conversion button is pressed, this async function is called, that
+  // checks and receives API data, parsing in primary selected currency.
   async function makeCurrencyAPIRequest()  {
       console.log('First country selected is: ', selectedCountry, ' and second selected country is ', secondSelectedCountry)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
@@ -198,9 +208,14 @@ export default function CurrencyConverter() {
     let swap1, swap2
     swap1 = selectedCountry
     swap2 = secondSelectedCountry
-    console.log("first country before swap: ", selectedCountry, " second country: ", secondSelectedCountry)
-    setSelectedCountry(swap2)
-    setSecondSelectedCountry(swap1)
+    if (swap1 === swap2){
+      console.log("Both countries are the same!")
+      return null
+    } else {
+      console.log("first country before swap: ", selectedCountry, " second country: ", secondSelectedCountry)
+      setSelectedCountry(swap2)
+      setSecondSelectedCountry(swap1)
+    }
   }
 
   const updateSelectedCountry = (event: any) => {
@@ -262,16 +277,15 @@ export default function CurrencyConverter() {
               VALUE FIELDS ALL CORRECTLY. */}
           <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
           <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
-          <Dropdown />
-          
         </div>
       </CurrencyItemDiv>
         <div>
-          <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton">Convert</StyledButton>
+          <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
         </div>
         
         <CurrencyReturnDiv>
         </CurrencyReturnDiv>
+        <p>Site developed by William Macluskie</p>
     </>
   )
   }
