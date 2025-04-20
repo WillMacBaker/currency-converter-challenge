@@ -4,6 +4,7 @@ import {  useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { EventEmitter } from 'stream';
 import {AiOutlineSwap} from "react-icons/ai"
+import Dropdown from './Dropdown';
 
 interface SearchbarProps {
   currencyCount: number,
@@ -95,21 +96,7 @@ const StyledInput = styled.input`
   }
 `
 
-const StyledSelect = styled.select`
-  position: relative;
-  padding: 1rem;
-  margin: 1rem;
-  width: 400px;
-  font-family: monospace;
-  padding: 15px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
-  background-color: #fff;
-  border: 4px solid #000;
-  position: relative;
-  box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
-`
+
 
 const CurrencyItemDiv = styled(motion.div)`
   display: flex;
@@ -126,29 +113,24 @@ const CurrencyReturnDiv = styled(motion.div)`
 const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 
 export default function CurrencyConverter() {
-  const [currencyData, setCurrencyData] = useState<any>({})
   const [currencyValue, setCurrencyValue] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("USD")
-  const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
+  const [errorFlag, setErrorFlag] = useState<boolean>(false)
+  
 
   //const [firstSelectedCountry, setFirstSelectedCountry] = useState()
   //const [secondCurrencyu]
 
   // On page load, make the below API requests to get data to populate various arrays
   // `
-  useEffect(() => {
-    makeDataAPIRequests()
-  }, [])
+
 
   useEffect(() => {
     
   }, [currencyValue])
 
   /* 
-  1. Create an input that will sanitise and error out if a non-valid number is entered
-  2. A button that will switch the 2 selected currency values (always convert the first currency to the second one!)
-    This will involve switching the selected items in each box. Both use same list, so ought to work...
 
   3. Create reusable dropdown component
     // Dropdown will have all available currencies from api <DONE>
@@ -209,15 +191,7 @@ export default function CurrencyConverter() {
     //}
   }
 
-  async function makeDataAPIRequests() {
-    const currencyOptionsRequestUrl = `https://openexchangerates.org/api/currencies.json`
-    await fetch(currencyOptionsRequestUrl)
-    .then(response => response.json())
-    .then(data => {
-      console.log("currencyData: ", data)
-      setCurrencyData(data)
-    })
-  }
+
   
   // Updates and swaps the two state variable values containing selected countries
   const swapCountry = (event: any) => {
@@ -286,16 +260,10 @@ export default function CurrencyConverter() {
           {/* TODO, MOVE EACH OF THESE STYLED SELECT ELEMENTS INTO THEIR
               OWN DROPDOWN COMPONENT FILE, AND MAKE SURE TO PASS IN ONCHANGE AND 
               VALUE FIELDS ALL CORRECTLY. */}
-          <StyledSelect onChange={updateSelectedCountry} value={selectedCountry}>
-              {Object.keys(currencyData)?.map((item?:any) => (
-              <option value={item} key={item}>{item} {currencyData[item]} </option>
-              ))}
-          </StyledSelect>
-          <StyledSelect onChange={updateSecondSelectedCountry} value={secondSelectedCountry}>
-              {Object.keys(currencyData)?.map((item?:any) => (
-              <option value={item} key={item}>{item} {currencyData[item]} </option>
-              ))}
-          </StyledSelect>
+          <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
+          <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
+          <Dropdown />
+          
         </div>
       </CurrencyItemDiv>
         <div>
