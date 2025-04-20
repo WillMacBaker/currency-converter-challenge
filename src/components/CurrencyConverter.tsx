@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {  useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { EventEmitter } from 'stream';
+import {AiOutlineSwap} from "react-icons/ai"
 
 interface SearchbarProps {
   currencyCount: number,
@@ -13,7 +14,6 @@ interface SearchbarProps {
 const StyledButton= styled(motion.button)`
   margin-top: 1rem;
   position: relative;
-  
   width: 250px;
   font-family: monospace;
   width: 250px;
@@ -38,6 +38,33 @@ const StyledButton= styled(motion.button)`
     box-shadow: 5px 5px 0 #E8793F;
   }
 
+`
+const StyledSquareButton = styled(motion.button)`
+  margin-top: 1rem;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  font-family: monospace;
+  padding: 2px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  background-color: #fff;
+  border: 4px solid #000;
+  position: relative;
+  border-radius: 10px;
+  outline: none;
+  box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+
+  &:hover {
+    background-color: #4a90e2;
+    color: #fff;
+  }
+  // When button has been clicked
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: 5px 5px 0 #E8793F;
+  }
 `
 
 const StyledInput = styled.input`
@@ -247,13 +274,18 @@ export default function CurrencyConverter() {
 
           >
           </StyledInput>
-          <StyledButton onClick={swapCountry} id="">Swap</StyledButton>
+          <StyledSquareButton onClick={swapCountry} id="">
+            <p>Ss</p>
+          </StyledSquareButton>
           { errorFlag && 
-            <p>{currencyValue} is not a valid number, please make sure to provide a valid input</p>
+            <p>{currencyValue} is not a valid number, please make sure to provide a valid input, comprising of a digit with up to two decimals.</p>
           }
 
         </div>
         <div>
+          {/* TODO, MOVE EACH OF THESE STYLED SELECT ELEMENTS INTO THEIR
+              OWN DROPDOWN COMPONENT FILE, AND MAKE SURE TO PASS IN ONCHANGE AND 
+              VALUE FIELDS ALL CORRECTLY. */}
           <StyledSelect onChange={updateSelectedCountry} value={selectedCountry}>
               {Object.keys(currencyData)?.map((item?:any) => (
               <option value={item} key={item}>{item} {currencyData[item]} </option>
