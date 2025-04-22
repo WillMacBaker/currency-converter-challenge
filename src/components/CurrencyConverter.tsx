@@ -135,13 +135,17 @@ const CurrencyReturnDiv = styled(motion.div)`
 
 const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 export default function CurrencyConverter() {
-  const [currencyValue, setCurrencyValue] = useState()
+  const [currencyValue, setCurrencyValue] = useState('')
+  const [convertedCurrency, setConvertedCurrency] = useState('')
   const [selectedCountry, setSelectedCountry] = useState("USD")
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [matchCountryError, setMatchCountryError] = useState<boolean>(false)
+  const [showCurrency, setShowCurrency] = useState<boolean>(false)
 
 
+  // Whenever any of the two country dropdown boxes are selected, checK and compare both using
+  // the compareCountries() function.
   useEffect(() => {
     compareCountries()
   }, [selectedCountry, secondSelectedCountry])
@@ -199,6 +203,7 @@ export default function CurrencyConverter() {
   const compareCountries = () => {
     if (selectedCountry === secondSelectedCountry){
       setMatchCountryError(true);
+      setShowCurrency(false);
       (document.getElementById('currencyInput')as HTMLInputElement).disabled = true;
       (document.getElementById('currencyInput')as HTMLInputElement).value = ""
     }
@@ -207,6 +212,12 @@ export default function CurrencyConverter() {
       (document.getElementById('currencyInput')as HTMLInputElement).disabled = false;
       
     }
+  }
+
+  const calcCurrency = (value: number, multiplier: number) => {
+    const convertedCurrency = value * multiplier
+    setShowCurrency(true)
+    //setConvertedCurrency(convertedCurrency)
   }
   // When conversion button is pressed, this async function is called, that
   // checks and receives API data, parsing in primary selected currency.
@@ -232,8 +243,13 @@ export default function CurrencyConverter() {
       .then(data => {
         console.log(secondSelectedCountry)
         // console.log("Full returned list of currency conversion data ", data.conversion_rates)
-        console.log(`Currency data for ${secondSelectedCountry}:`, data.conversion_rates[secondSelectedCountry])
-        console.log(currencyValue)
+        const multiple = data.conversion_rates[secondSelectedCountry];
+        const currencyNumber = parseInt(currencyValue)
+        console.log(`Currency data for ${secondSelectedCountry}:`, multiple)
+        
+
+        calcCurrency(currencyNumber, multiple)
+        // Function in here to trigger the countDownTimer
         
       })
     }
@@ -278,10 +294,14 @@ export default function CurrencyConverter() {
     let regexCheck = sanitiseInput(value)
     if (regexCheck === true){
       setErrorFlag(false)
-      console.log(errorFlag)
-      setCurrencyValue(value)
+      console.log(errorFlag);
+      console.log("Button re-enabled");
+      (document.getElementById('inputButton')as HTMLButtonElement).disabled = false;
+      setCurrencyValue(value);
     } else if (regexCheck === false) {
-      setErrorFlag(true)
+      setErrorFlag(true);
+      console.log("Button disabled");
+      (document.getElementById('inputButton')as HTMLButtonElement).disabled = true;
       setCurrencyValue(value)
     }
     console.log("initial regexCheck returns  ", regexCheck, " with a value of ", value, " errorflag has been set to ", errorFlag)
@@ -331,6 +351,10 @@ export default function CurrencyConverter() {
       </StyledInputContainer>
         
       <CurrencyReturnDiv>
+        {
+          showCurrency &&
+          <p>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </p>
+        }
       </CurrencyReturnDiv>
 
       <p>Site developed by William Macluskie</p>
