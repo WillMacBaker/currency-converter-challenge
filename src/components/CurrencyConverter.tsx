@@ -2,57 +2,64 @@ import styled from 'styled-components'
 
 import {  useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { EventEmitter } from 'stream';
 import {AiOutlineSwap} from "react-icons/ai"
 import Dropdown from './Dropdown';
+import { IconBaseProps } from 'react-icons';
+import { match } from 'assert';
 
-interface SearchbarProps {
-  currencyCount: number,
-  setCurrencyCount: Function
-}
 
 
 const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
+  display: inline-flexbox;
+  justify-self: center;
   margin-top: 1rem;
-  position: relative;
-  width: 250px;
+  width: 500px;
   font-family: monospace;
-  width: 250px;
   padding: 15px;
   font-size: 18px;
   font-weight: bold;
-  color: #000;
-  background-color: #fff;
-  border: ${props =>
-  props.activeFlag? '5px solid red' 
-  :
-  '4px solid #000'};
   position: relative;
   border-radius: 30px;
   outline: none;
-  box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+  color: ${props =>
+  props.activeFlag? 'gray' 
+  :'#000;'};
+  background-color: #fff;
 
+  border: ${props =>
+  props.activeFlag? '5px solid gray' 
+  :'4px solid #000'};
   
   
+  box-shadow: ${props =>
+  props.activeFlag? '5px 5px 0 gray, 10px 10px 0 darkgray;' 
+  :'5px 5px 0 #000, 10px 10px 0 #E8793F;'};
 
-  &:hover {
-    background-color: #4a90e2;
+
+  ${props =>
+  props.activeFlag?
+  null
+:
+`&:hover {
+    background-color: #E8793F;
     color: #fff;
   }
   // When button has been clicked
   &:active {
     transform: translate(3px, 3px);
     box-shadow: 5px 5px 0 #E8793F;
-  }
+  }`}
+  
 
 
 
 `
-const StyledSquareButton = styled(motion.button)`
+const StyledSquareButton = styled(motion.button)<{activeFlag?: boolean}>`
+  right: 4.1rem;
   margin-top: 1rem;
-  position: relative;
-  width: 50px;
-  height: 50px;
+  min-width: 0px;
+  width: 40px;
+  height: 40px;
   font-family: monospace;
   padding: 2px;
   font-size: 18px;
@@ -63,20 +70,27 @@ const StyledSquareButton = styled(motion.button)`
   position: relative;
   border-radius: 10px;
   outline: none;
-  box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+  box-shadow: ${props =>
+  props.activeFlag? '2px 2px 0 gray, 4px 4px 0 darkgray;' 
+  :'2px 2px 0 #000, 4px 4px 0 #E8793F;'};
 
-  &:hover {
-    background-color: #4a90e2;
+${props =>
+  props.activeFlag?
+  null
+:
+`&:hover {
+    background-color: #E8793F;
     color: #fff;
   }
   // When button has been clicked
   &:active {
     transform: translate(3px, 3px);
-    box-shadow: 5px 5px 0 #E8793F;
-  }
+    box-shadow: 0px 0px 0 #E8793F;
+  }`}
 `
 
-const StyledInput = styled.input`
+const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
+  align-self: center;
   position: relative;
   padding: 1rem;
   margin: 1rem;
@@ -90,7 +104,9 @@ const StyledInput = styled.input`
   background-color: #fff;
   border: 4px solid #000;
   position: relative;
-  box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
+  box-shadow: ${props =>
+  props.activeFlag? '5px 5px 0 gray, 10px 10px 0 darkgray;' 
+  :'5px 5px 0 #000, 10px 10px 0 #E8793F;'};
 
   &:focus{
    // outline: 1px solid #E8793F;
@@ -104,9 +120,10 @@ const StyledInput = styled.input`
   }
 `
 
-const CurrencyItemDiv = styled(motion.div)`
-  display: flex;
-  max-width: 80%;
+const StyledInputContainer = styled(motion.div)`
+  display: inline-flexbox;
+  flex-wrap: nowrap;
+  width: 100%;
 `
 
 const CurrencyReturnDiv = styled(motion.div)`
@@ -117,24 +134,17 @@ const CurrencyReturnDiv = styled(motion.div)`
 `
 
 const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
-
 export default function CurrencyConverter() {
-  const [currencyValue, setCurrencyValue] = useState("")
+  const [currencyValue, setCurrencyValue] = useState()
   const [selectedCountry, setSelectedCountry] = useState("USD")
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
-  
-
-  //const [firstSelectedCountry, setFirstSelectedCountry] = useState()
-  //const [secondCurrencyu]
-
-  // On page load, make the below API requests to get data to populate various arrays
-  // `
+  const [matchCountryError, setMatchCountryError] = useState<boolean>(false)
 
 
   useEffect(() => {
-    
-  }, [currencyValue])
+    compareCountries()
+  }, [selectedCountry, secondSelectedCountry])
   /* 
 
   3. Create reusable dropdown component
@@ -142,6 +152,8 @@ export default function CurrencyConverter() {
     3a. Dropdown will include a search input for user to filter out options
     3b. Search input will require correct validation if no record is found (regex + error handling?)
     3c. Images loaded and shown on the side of the currency
+
+    // To meet 3a and 3b, look to example provided in https://incoderweb.blogspot.com/2022/04/custom-select-input-with-search-option.html
   
   4. Convert button
     4a. Conversion button will convert amount entered, and display it below in string format "VALUE first currency is equal to VALUE second currency
@@ -184,17 +196,48 @@ export default function CurrencyConverter() {
     } 
   }
 
+  const compareCountries = () => {
+    if (selectedCountry === secondSelectedCountry){
+      setMatchCountryError(true);
+      (document.getElementById('currencyInput')as HTMLInputElement).disabled = true;
+      (document.getElementById('currencyInput')as HTMLInputElement).value = ""
+    }
+    else {
+      setMatchCountryError(false);
+      (document.getElementById('currencyInput')as HTMLInputElement).disabled = false;
+      
+    }
+  }
   // When conversion button is pressed, this async function is called, that
   // checks and receives API data, parsing in primary selected currency.
   async function makeCurrencyAPIRequest()  {
-      console.log('First country selected is: ', selectedCountry, ' and second selected country is ', secondSelectedCountry)
+    console.log("entered currencyValue: ", currencyValue)
+    if (errorFlag){
+      // Value is invalid, and no API request will be made
+      //console.log("error, Invalid value! You're trying to mash the grayed out button, not happening >:(")
+    }
+
+    else if (matchCountryError){
+      console.log("Both countries are the same! No currency conversion will happen")
+    }
+    else if (currencyValue === ""){
+      // *Shouldn't proc, as the button is set to be disabled when errorFlag is true, but just in case...
+      console.log("No number value was added!")
+    }
+    else {
+      //console.log('First country selected is: ', selectedCountry, ' and second selected country is ', secondSelectedCountry)
       const countryFetchRequest = `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/${selectedCountry}`
       await fetch(countryFetchRequest)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        // This function below must be changed to 'setCurrencyValue' and passed to parent.
+        console.log(secondSelectedCountry)
+        // console.log("Full returned list of currency conversion data ", data.conversion_rates)
+        console.log(`Currency data for ${secondSelectedCountry}:`, data.conversion_rates[secondSelectedCountry])
+        console.log(currencyValue)
+        
       })
+    }
+      
     // else {
       // Handling here or elsewhere for invalid numbers? :o
       //alert("Please enter a search term!")
@@ -209,10 +252,10 @@ export default function CurrencyConverter() {
     swap1 = selectedCountry
     swap2 = secondSelectedCountry
     if (swap1 === swap2){
-      console.log("Both countries are the same!")
+      //console.log("Both countries are the same!")
       return null
     } else {
-      console.log("first country before swap: ", selectedCountry, " second country: ", secondSelectedCountry)
+      //console.log("first country before swap: ", selectedCountry, " second country: ", secondSelectedCountry)
       setSelectedCountry(swap2)
       setSecondSelectedCountry(swap1)
     }
@@ -220,13 +263,13 @@ export default function CurrencyConverter() {
 
   const updateSelectedCountry = (event: any) => {
     const value = event.target.value
-    console.log("value in dropdown changed to ", value)
+    //console.log("value in dropdown changed to ", value)
     setSelectedCountry(value)
   }
 
   const updateSecondSelectedCountry = (event: any) => {
     const value = event.target.value
-    console.log("value in second dropdown changed to ", value)
+    //console.log("value in second dropdown changed to ", value)
     setSecondSelectedCountry(value)
   }
 
@@ -254,38 +297,43 @@ export default function CurrencyConverter() {
   
   return (
     <>
-      <CurrencyItemDiv>
-        <div>
-          <StyledInput
-            id="currencyInput" 
-            onChange={handleInputChange}
-            maxLength={10}
+      <StyledInputContainer>
+        <StyledInput
+          id="currencyInput" 
+          onChange={handleInputChange}
+          maxLength={10}
+          activeFlag={matchCountryError}
+        >
+        </StyledInput>
+        <StyledSquareButton 
+          onClick={swapCountry} 
+          activeFlag={matchCountryError} 
+          id="swapCountries">
+          <AiOutlineSwap />
+        </StyledSquareButton>
+        { errorFlag && 
+          <p>{currencyValue} is not a valid number, please make sure to provide a valid input, comprising of a digit with up to two decimals.</p>
+        }
+        { matchCountryError &&
+            <p>Both countries match! Please change one of your currency selections</p>
+        }
 
-          >
-          </StyledInput>
-          <StyledSquareButton onClick={swapCountry} id="">
-            <p>Ss</p>
-          </StyledSquareButton>
-          { errorFlag && 
-            <p>{currencyValue} is not a valid number, please make sure to provide a valid input, comprising of a digit with up to two decimals.</p>
-          }
-
-        </div>
-        <div>
-          {/* TODO, MOVE EACH OF THESE STYLED SELECT ELEMENTS INTO THEIR
-              OWN DROPDOWN COMPONENT FILE, AND MAKE SURE TO PASS IN ONCHANGE AND 
-              VALUE FIELDS ALL CORRECTLY. */}
-          <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
-          <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
-        </div>
-      </CurrencyItemDiv>
-        <div>
-          <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
-        </div>
+      </StyledInputContainer>
+      <StyledInputContainer>
+        {/* TODO, MOVE EACH OF THESE STYLED SELECT ELEMENTS INTO THEIR
+            OWN DROPDOWN COMPONENT FILE, AND MAKE SURE TO PASS IN ONCHANGE AND 
+            VALUE FIELDS ALL CORRECTLY. */}
+        <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
+        <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
+      </StyledInputContainer>
+      <StyledInputContainer>
+        <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
+      </StyledInputContainer>
         
-        <CurrencyReturnDiv>
-        </CurrencyReturnDiv>
-        <p>Site developed by William Macluskie</p>
+      <CurrencyReturnDiv>
+      </CurrencyReturnDiv>
+
+      <p>Site developed by William Macluskie</p>
     </>
   )
   }
