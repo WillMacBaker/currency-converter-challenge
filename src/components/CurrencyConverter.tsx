@@ -6,6 +6,7 @@ import {AiOutlineSwap} from "react-icons/ai"
 import Dropdown from './Dropdown';
 import { IconBaseProps } from 'react-icons';
 import { match } from 'assert';
+import { string } from 'prop-types';
 
 
 
@@ -13,7 +14,8 @@ const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
   display: inline-flexbox;
   justify-self: center;
   margin-top: 1rem;
-  width: 500px;
+  width: 400px;
+  max-width: 100%;
   font-family: monospace;
   padding: 15px;
   font-size: 18px;
@@ -89,12 +91,25 @@ ${props =>
   }`}
 `
 
+const StyledText = styled(motion.text)`
+  font-family: monospace;
+  font-weight: bold;
+  padding: 2rem;
+  max-width: 100%;
+  text-align: center;
+`
+const StyledBottomText = styled.text`
+  font-family: monospace;
+  position: fixed;
+  bottom: 0;
+`
+
 const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
   align-self: center;
   position: relative;
-  padding: 1rem;
   margin: 1rem;
   width: 250px;
+  max-width: 100%;
   font-family: monospace;
   width: 250px;
   padding: 15px;
@@ -121,17 +136,35 @@ const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
 `
 
 const StyledInputContainer = styled(motion.div)`
+  justify-self: center;
+  justify-content: center;
+  max-width: 95%;
+  align-items: center;
+  padding-bottom: 1rem;
   display: inline-flexbox;
   flex-wrap: nowrap;
-  width: 100%;
 `
 
-const CurrencyReturnDiv = styled(motion.div)`
-  .custom-pattern {
-	background-image: repeating-linear-gradient(45deg, transparent, transparent 80px, #1A8FE5 80px, #1A8FE5 160px);
-	background-color: #E4E4ED;
-}
+const StyledDivider = styled.div`
+  display: block;
+  margin: auto;
+  justify-self: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  
+  
 `
+
+const StyledAppContainer = styled(motion.div)`
+  display: flex;
+  flex-wrap: wrap;
+  justify-self: center;
+  justify-content: center;
+  max-width: 95%;
+  align-items: center;
+`
+
 
 const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 export default function CurrencyConverter() {
@@ -148,7 +181,8 @@ export default function CurrencyConverter() {
   // the compareCountries() function.
   useEffect(() => {
     compareCountries()
-  }, [selectedCountry, secondSelectedCountry])
+    setShowCurrency(false);
+  }, [selectedCountry, secondSelectedCountry, currencyValue])
   /* 
 
   3. Create reusable dropdown component
@@ -215,9 +249,10 @@ export default function CurrencyConverter() {
   }
 
   const calcCurrency = (value: number, multiplier: number) => {
-    const convertedCurrency = value * multiplier
+    const tempConvertedCurrency = value * multiplier
     setShowCurrency(true)
-    //setConvertedCurrency(convertedCurrency)
+    const stringValue = `${tempConvertedCurrency}`
+    return stringValue
   }
   // When conversion button is pressed, this async function is called, that
   // checks and receives API data, parsing in primary selected currency.
@@ -227,7 +262,6 @@ export default function CurrencyConverter() {
       // Value is invalid, and no API request will be made
       //console.log("error, Invalid value! You're trying to mash the grayed out button, not happening >:(")
     }
-
     else if (matchCountryError){
       console.log("Both countries are the same! No currency conversion will happen")
     }
@@ -245,10 +279,10 @@ export default function CurrencyConverter() {
         // console.log("Full returned list of currency conversion data ", data.conversion_rates)
         const multiple = data.conversion_rates[secondSelectedCountry];
         const currencyNumber = parseInt(currencyValue)
-        console.log(`Currency data for ${secondSelectedCountry}:`, multiple)
-        
+        //console.log(`Currency data for ${secondSelectedCountry}:`, multiple)
+        let calculatedCurrency = calcCurrency(currencyNumber, multiple)
 
-        calcCurrency(currencyNumber, multiple)
+        setConvertedCurrency(calculatedCurrency)
         // Function in here to trigger the countDownTimer
         
       })
@@ -317,47 +351,52 @@ export default function CurrencyConverter() {
   
   return (
     <>
-      <StyledInputContainer>
-        <StyledInput
-          id="currencyInput" 
-          onChange={handleInputChange}
-          maxLength={10}
-          activeFlag={matchCountryError}
-        >
-        </StyledInput>
-        <StyledSquareButton 
-          onClick={swapCountry} 
-          activeFlag={matchCountryError} 
-          id="swapCountries">
-          <AiOutlineSwap />
-        </StyledSquareButton>
-        { errorFlag && 
-          <p>{currencyValue} is not a valid number, please make sure to provide a valid input, comprising of a digit with up to two decimals.</p>
-        }
-        { matchCountryError &&
-            <p>Both countries match! Please change one of your currency selections</p>
-        }
-
-      </StyledInputContainer>
-      <StyledInputContainer>
-        {/* TODO, MOVE EACH OF THESE STYLED SELECT ELEMENTS INTO THEIR
-            OWN DROPDOWN COMPONENT FILE, AND MAKE SURE TO PASS IN ONCHANGE AND 
-            VALUE FIELDS ALL CORRECTLY. */}
-        <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
-        <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
-      </StyledInputContainer>
-      <StyledInputContainer>
-        <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
-      </StyledInputContainer>
-        
-      <CurrencyReturnDiv>
-        {
-          showCurrency &&
-          <p>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </p>
-        }
-      </CurrencyReturnDiv>
-
-      <p>Site developed by William Macluskie</p>
+      <StyledAppContainer>
+        <StyledDivider id="input-div">
+            <StyledInput
+              id="currencyInput" 
+              onChange={handleInputChange}
+              maxLength={10}
+              activeFlag={matchCountryError}
+            >
+            </StyledInput>
+            <StyledSquareButton 
+              onClick={swapCountry} 
+              activeFlag={matchCountryError} 
+              id="swapCountries">
+              <AiOutlineSwap />
+            </StyledSquareButton>
+        </StyledDivider>
+        <StyledDivider id="error-text-div">
+            { errorFlag && 
+              <StyledDivider>
+                <StyledText>{currencyValue} is not a valid number, please make sure to provide a valid input, comprising of a digit with up to two decimals.</StyledText>
+              </StyledDivider>
+            }
+            { matchCountryError &&
+                <StyledDivider>
+                  <StyledText>Both countries match! Please change one of your currency selections</StyledText>
+                </StyledDivider>
+            }
+        </StyledDivider>
+        <StyledDivider id="dropdown-container-div">
+          <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
+          <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
+        </StyledDivider>
+        <StyledDivider id="show-converted-currency-div">
+          {
+            showCurrency &&
+            <StyledDivider>
+              <StyledText>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
+            </StyledDivider>
+          }
+        </StyledDivider>
+        <StyledDivider id="convert-currency-button-div">
+            <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
+        </StyledDivider>
+          <StyledBottomText>Site developed by William Macluskie</StyledBottomText>
+      </StyledAppContainer>
+      
     </>
   )
   }
