@@ -38,6 +38,10 @@ const StyledSelect = styled.select`
     3c. Images loaded and shown on the side of the currency
 */
 
+// Optional future update: add flag to this so that either api dropdown 
+// can be selected, or just regular-flavour dropdown, with a supplied array
+// of values?
+
 export default function Dropdown({stateVar, value}: DropdownProps){
     const [currencyData, setCurrencyData] = useState<any>({})
 

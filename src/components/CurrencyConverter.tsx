@@ -10,6 +10,17 @@ import { string } from 'prop-types';
 
 
 
+/* 
+TODO, ADD TASTEFUL BACKGROUND
+Round down to 3dig + 2 dec places 
+OPTIONAL, ADD CHOICE OF ROUNDING DOWN
+WORK ON TIMER COMPONENT AND GET IT COUNTING DOWN
+ADD JEST TESTS, MAKE SURE THAT ANY MALFORMED ENTRIES CORRECTLY ERROR OUT!
+
+
+*/
+
+
 const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
   display: inline-flexbox;
   justify-self: center;
@@ -56,8 +67,13 @@ const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
 
 
 `
+
+const OptionsDiv = styled.div`
+
+`
+
 const StyledSquareButton = styled(motion.button)<{activeFlag?: boolean}>`
-  right: 4rem;
+  right: 6.5rem;
   min-width: 0px;
   width: 40px;
   height: 40px;
@@ -90,7 +106,44 @@ ${props =>
   }`}
 `
 
-const StyledText = styled(motion.text)`
+const StyledSelect = styled(motion.select)<{activeFlag?: boolean}>`
+  right: 6.75rem;
+  bottom: 0.1rem;
+  min-width: 0px;
+  width: 40px;
+  height: 40px;
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  background-color: #fff;
+  border: 4px solid #000;
+  position: relative;
+  border-radius: 10px;
+  outline: none;
+  box-shadow: ${props =>
+  props.activeFlag? '2px 2px 0 gray, 4px 4px 0 darkgray;' 
+  :'2px 2px 0 #000, 4px 4px 0 #E8793F;'};
+
+${props =>
+  props.activeFlag?
+  null
+:
+`&:hover {
+    background-color: #E8793F;
+    color: #fff;
+  }
+  // When button has been clicked
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0 #E8793F;
+  }`}
+`
+
+const StyledText = styled(motion.text)<{fontSize?: string}>`
+  font-size: ${props =>
+  props.fontSize? `${props.fontSize}px;` 
+  : '16px;'};
   font-family: monospace;
   font-weight: bold;
   padding: 2rem;
@@ -106,6 +159,7 @@ const StyledHeader = styled(motion.h1)`
 `
 
 const StyledBottomText = styled.text`
+  font-size: 22px;
   font-family: monospace;
   position: fixed;
   bottom: 0;
@@ -173,6 +227,7 @@ export default function CurrencyConverter() {
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [matchCountryError, setMatchCountryError] = useState<boolean>(false)
   const [showCurrency, setShowCurrency] = useState<boolean>(false)
+  const [selectedDecimalCount, setSelectedDecimalCount] = useState<number>(1)
 
 
   // Whenever any of the two country dropdown boxes are selected, checK and compare both using
@@ -252,6 +307,19 @@ export default function CurrencyConverter() {
     const stringValue = `${tempConvertedCurrency}`
     return stringValue
   }
+
+  // Lets you customise the number of rounding places you can
+  // use when returning a number. Better method would be able
+  // to call this function using a state variable, and have that
+  // update based on a dropdown? :)
+  const returnRoundedValue = (value: number, places: number) => {
+    let mult = parseInt("1" + "0".repeat(places))
+    console.log("value", value)
+    value = value * mult
+    value = Math.round(value)
+
+    return `${value/mult}`
+  }
   // When conversion button is pressed, this async function is called, that
   // checks and receives API data, parsing in primary selected currency.
   async function makeCurrencyAPIRequest()  {
@@ -279,8 +347,8 @@ export default function CurrencyConverter() {
         const currencyNumber = parseInt(currencyValue)
         //console.log(`Currency data for ${secondSelectedCountry}:`, multiple)
         let calculatedCurrency = calcCurrency(currencyNumber, multiple)
-
-        setConvertedCurrency(calculatedCurrency)
+        let roundedCurrency = returnRoundedValue(parseFloat(calculatedCurrency), selectedDecimalCount)
+        setConvertedCurrency(roundedCurrency)
         // Function in here to trigger the countDownTimer
         
       })
@@ -292,8 +360,6 @@ export default function CurrencyConverter() {
     //}
   }
 
-
-  
   // Updates and swaps the two state variable values containing selected countries
   const swapCountry = (event: any) => {
     let swap1, swap2
@@ -315,6 +381,10 @@ export default function CurrencyConverter() {
     setSelectedCountry(value)
   }
 
+  const updateDecimalCount = (event: any) => {
+    const value = event.target.value
+    setSelectedDecimalCount(value)
+  }
   const updateSecondSelectedCountry = (event: any) => {
     const value = event.target.value
     //console.log("value in second dropdown changed to ", value)
@@ -339,6 +409,7 @@ export default function CurrencyConverter() {
     console.log("initial regexCheck returns  ", regexCheck, " with a value of ", value, " errorflag has been set to ", errorFlag)
   }
   
+  // QoL addition so user can mash enter button to convert currency
   const inputListener = document.getElementById('currencyInput')
   inputListener?.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
@@ -358,13 +429,27 @@ export default function CurrencyConverter() {
               maxLength={10}
               activeFlag={matchCountryError}
             >
+              
             </StyledInput>
-            <StyledSquareButton 
-              onClick={swapCountry} 
-              activeFlag={matchCountryError} 
-              id="swapCountries">
-              <AiOutlineSwap />
-            </StyledSquareButton>
+            <OptionsDiv>
+              <StyledSelect
+                onChange={updateDecimalCount}
+                activeFlag={matchCountryError}
+                id="select-decimals"
+              >
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </StyledSelect>
+              <StyledSquareButton 
+                onClick={swapCountry} 
+                activeFlag={matchCountryError} 
+                id="swapCountries">
+                <AiOutlineSwap />
+              </StyledSquareButton>
+            </OptionsDiv>
         </StyledDivider>
         <StyledDivider id="error-text-div">
             { errorFlag && 
@@ -386,7 +471,7 @@ export default function CurrencyConverter() {
           {
             showCurrency &&
             <StyledDivider>
-              <StyledText>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
+              <StyledText fontSize={'18'}>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
             </StyledDivider>
           }
         </StyledDivider>
