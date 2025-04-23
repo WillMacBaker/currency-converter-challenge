@@ -57,8 +57,7 @@ const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
 
 `
 const StyledSquareButton = styled(motion.button)<{activeFlag?: boolean}>`
-  right: 4.1rem;
-  margin-top: 1rem;
+  right: 4rem;
   min-width: 0px;
   width: 40px;
   height: 40px;
@@ -98,6 +97,14 @@ const StyledText = styled(motion.text)`
   max-width: 100%;
   text-align: center;
 `
+
+const StyledHeader = styled(motion.h1)`
+  display: flex;
+  justify-content: center;
+  font-size: 32px;
+  font-family: monospace;
+`
+
 const StyledBottomText = styled.text`
   font-family: monospace;
   position: fixed;
@@ -105,13 +112,12 @@ const StyledBottomText = styled.text`
 `
 
 const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
-  align-self: center;
+  justify-content: center;
   position: relative;
   margin: 1rem;
-  width: 250px;
+  width: 300px;
   max-width: 100%;
   font-family: monospace;
-  width: 250px;
   padding: 15px;
   font-size: 18px;
   font-weight: bold;
@@ -135,20 +141,12 @@ const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
   }
 `
 
-const StyledInputContainer = styled(motion.div)`
-  justify-self: center;
-  justify-content: center;
-  max-width: 95%;
-  align-items: center;
-  padding-bottom: 1rem;
-  display: inline-flexbox;
-  flex-wrap: nowrap;
-`
 
 const StyledDivider = styled.div`
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
   margin: auto;
-  justify-self: center;
+  justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 100%;
@@ -351,6 +349,7 @@ export default function CurrencyConverter() {
   
   return (
     <>
+      <StyledHeader>Currency Converter App</StyledHeader>
       <StyledAppContainer>
         <StyledDivider id="input-div">
             <StyledInput
