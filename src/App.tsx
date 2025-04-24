@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import CurrencyConverter from './components/CurrencyConverter';
+import TastefulSVGRectangle from './components/UI/TastefulSVGRectangle';
 
 export default function App() {
 
@@ -13,6 +14,7 @@ export default function App() {
   return (
     <>
     <CurrencyConverter />
+    <TastefulSVGRectangle primaryColor='#f1ac88' xCoord='-150' yCoord='0' rotateVector='rotate(-45)'/>
     </>
   );
 }

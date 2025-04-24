@@ -7,6 +7,7 @@ import Dropdown from './Dropdown';
 import { IconBaseProps } from 'react-icons';
 import { match } from 'assert';
 import { string } from 'prop-types';
+import Countdown from './Countdown';
 
 
 
@@ -68,12 +69,24 @@ const StyledButton= styled(motion.button)<{activeFlag: boolean}>`
 
 `
 
-const OptionsDiv = styled.div`
 
+const StyledInputDivider = styled.div`
+  position: relative;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+
+`
+const OptionsDiv = styled.div`
+  position: relative;
+  display: flex;
+  right: 4.25rem;
 `
 
 const StyledSquareButton = styled(motion.button)<{activeFlag?: boolean}>`
-  right: 6.5rem;
   min-width: 0px;
   width: 40px;
   height: 40px;
@@ -107,8 +120,7 @@ ${props =>
 `
 
 const StyledSelect = styled(motion.select)<{activeFlag?: boolean}>`
-  right: 6.75rem;
-  bottom: 0.1rem;
+  right: 0.25rem;
   min-width: 0px;
   width: 40px;
   height: 40px;
@@ -166,8 +178,8 @@ const StyledBottomText = styled.text`
 `
 
 const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
-  justify-content: center;
   position: relative;
+  left: 2.5rem;
   margin: 1rem;
   width: 300px;
   max-width: 100%;
@@ -178,7 +190,6 @@ const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
   color: #000;
   background-color: #fff;
   border: 4px solid #000;
-  position: relative;
   box-shadow: ${props =>
   props.activeFlag? '5px 5px 0 gray, 10px 10px 0 darkgray;' 
   :'5px 5px 0 #000, 10px 10px 0 #E8793F;'};
@@ -292,11 +303,14 @@ export default function CurrencyConverter() {
       setMatchCountryError(true);
       setShowCurrency(false);
       (document.getElementById('currencyInput')as HTMLInputElement).disabled = true;
+      (document.getElementById('select-decimals')as HTMLSelectElement).disabled = true;
       (document.getElementById('currencyInput')as HTMLInputElement).value = ""
+      
     }
     else {
       setMatchCountryError(false);
       (document.getElementById('currencyInput')as HTMLInputElement).disabled = false;
+      (document.getElementById('select-decimals')as HTMLSelectElement).disabled = false;
       
     }
   }
@@ -422,11 +436,11 @@ export default function CurrencyConverter() {
     <>
       <StyledHeader>Currency Converter App</StyledHeader>
       <StyledAppContainer>
-        <StyledDivider id="input-div">
+        <StyledInputDivider id="input-div">
             <StyledInput
               id="currencyInput" 
               onChange={handleInputChange}
-              maxLength={10}
+              maxLength={20}
               activeFlag={matchCountryError}
             >
               
@@ -450,7 +464,7 @@ export default function CurrencyConverter() {
                 <AiOutlineSwap />
               </StyledSquareButton>
             </OptionsDiv>
-        </StyledDivider>
+        </StyledInputDivider>
         <StyledDivider id="error-text-div">
             { errorFlag && 
               <StyledDivider>
@@ -475,6 +489,14 @@ export default function CurrencyConverter() {
             </StyledDivider>
           }
         </StyledDivider>
+        
+          {
+            showCurrency &&
+            <StyledDivider>
+              <Countdown />
+            </StyledDivider>
+          }
+        
         <StyledDivider id="convert-currency-button-div">
             <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
         </StyledDivider>

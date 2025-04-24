@@ -11,13 +11,13 @@ interface DropdownProps{
     value?: any
 }
 
-
 // Styled components
 const StyledSelect = styled.select`
   position: relative;
   padding: 1rem;
   margin: 1rem;
   width: 400px;
+  max-width: 100%;
   font-family: monospace;
   padding: 15px;
   font-size: 18px;
@@ -59,6 +59,8 @@ export default function Dropdown({stateVar, value}: DropdownProps){
     })
     }
 
+  // TODO: Call up the flag API to grab the flag image, and figure out adding the flag, either as an image,
+  // or redoing the component as a div.
   return (
     <>
     <StyledSelect onChange={stateVar} value={value}>

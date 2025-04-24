@@ -6,41 +6,24 @@ import { EventEmitter } from 'stream';
 import {AiOutlineSwap} from "react-icons/ai"
 
 // Props
-interface DropdownProps{
+interface CountdownProps{
     stateVar?: any
-    value?: any
+    setStateVar?: any
 }
 
+// https://www.freecodecamp.org/news/build-a-countdown-timer-with-react-step-by-step/
+export default function Countdown({stateVar, setStateVar}: CountdownProps){
+  const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [countdownStarted, setCountdownStarted] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(0);
 
-/* 
-    TODO
-  2. Create reusable dropdown component
-    // Dropdown will have all available currencies from api <DONE>
-    3a. Dropdown will include a search input for user to filter out options
-    3b. Search input will require correct validation if no record is found (regex + error handling?)
-    3c. Images loaded and shown on the side of the currency
-*/
-
-export default function Countdown({stateVar, value}: DropdownProps){
-    const [currencyData, setCurrencyData] = useState<any>({})
-
-    useEffect(() => {
-        makeDataAPIRequests()
-    }, [])
-
-    async function makeDataAPIRequests() {
-    const currencyOptionsRequestUrl = `https://openexchangerates.org/api/currencies.json`
-    await fetch(currencyOptionsRequestUrl)
-    .then(response => response.json())
-    .then(data => {
-        console.log("currencyData: ", data)
-        setCurrencyData(data)
-    })
-    }
 
   return (
     <>
-    {/* RETURN DIV WITH TEXT THAT UPDATES EACH SECOND */}
+    <div>
+      <p>BALLS BALLS BALLS OF STEEL</p>
+    </div>
     </>
   )
 }
