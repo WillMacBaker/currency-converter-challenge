@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { EventEmitter } from 'stream';
 import {AiOutlineSwap} from "react-icons/ai"
+import React from 'react';
 
 // Props
 interface DropdownProps{
     stateVar?: any
     value?: any
 }
+
+// SET 90% VIEWHEIGHT, POSITION ABSOLUTEFASUHDFPOUSWHFOIUWEDHFLIC
 
 // Styled components
 const StyledSelect = styled.select`

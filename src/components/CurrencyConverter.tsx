@@ -123,7 +123,7 @@ ${props =>
 const StyledSelect = styled(motion.select)<{activeFlag?: boolean}>`
   right: 0.25rem;
   min-width: 0px;
-  width: 40px;
+  width: 43px;
   height: 40px;
   font-family: monospace;
   font-size: 18px;
@@ -494,7 +494,7 @@ export default function CurrencyConverter() {
           {
             showCurrency &&
             <StyledDivider>
-              <Countdown />
+              {/* <Countdown stateVar={} setStateVar={}/> */}
             </StyledDivider>
           }
         
