@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import CurrencyConverter from './components/CurrencyConverter';
 import TastefulSVGRectangle from './components/UI/TastefulSVGRectangle';
