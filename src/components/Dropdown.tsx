@@ -12,7 +12,6 @@ interface DropdownProps{
     value?: any
 }
 
-// SET 90% VIEWHEIGHT, POSITION ABSOLUTEFASUHDFPOUSWHFOIUWEDHFLIC
 
 // Styled components
 const StyledSelect = styled.select`

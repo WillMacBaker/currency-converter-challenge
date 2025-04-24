@@ -12,8 +12,16 @@ export default function App() {
   
   return (
     <>
-    <CurrencyConverter />
-    <TastefulSVGRectangle primaryColor='#f1ac88' xCoord='-150' yCoord='0' rotateVector='rotate(-45)'/>
+    <div className="wrapper-layer">
+      <div className="content-layer">
+        <CurrencyConverter />
+      </div>
+      <div className="background-layer">
+        <TastefulSVGRectangle primaryColor='#f1ac88' xCoord='-150' yCoord='0' rotateVector='rotate(-45)'/>
+      </div>
+    </div>
     </>
   );
 }
+
+// // SET 90% VIEWHEIGHT, POSITION ABSOLUTEFASUHDFPOUSWHFOIUWEDHFLIC
