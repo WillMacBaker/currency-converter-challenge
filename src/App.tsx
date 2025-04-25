@@ -23,5 +23,3 @@ export default function App() {
     </>
   );
 }
-
-// // SET 90% VIEWHEIGHT, POSITION ABSOLUTEFASUHDFPOUSWHFOIUWEDHFLIC

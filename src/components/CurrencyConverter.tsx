@@ -494,7 +494,7 @@ export default function CurrencyConverter() {
           {
             showCurrency &&
             <StyledDivider>
-              {/* <Countdown stateVar={} setStateVar={}/> */}
+              <Countdown stateVar={showCurrency} setStateVar={setShowCurrency}/>
             </StyledDivider>
           }
         
