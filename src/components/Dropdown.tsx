@@ -68,11 +68,9 @@ export default function Dropdown({stateVar, value}: DropdownProps){
   return (
     <>
     <StyledSelect onChange={stateVar} value={value}>
-      <div>
         {Object.keys(currencyData)?.map((item?:any) => (
         <option value={item} key={item}>{item} {currencyData[item]} </option>
         ))}
-      </div>
     </StyledSelect>
     </>
   )

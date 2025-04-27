@@ -1,40 +1,41 @@
-import styled from 'styled-components'
-
 import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { EventEmitter } from 'stream';
-import {AiOutlineSwap} from "react-icons/ai"
-import React from 'react';
+import { setTokenSourceMapRange } from 'typescript';
+import { motion, AnimatePresence } from 'motion/react';
 
 // Props
 interface CountdownProps{
-    stateVar?: any
-    setStateVar?: any
+activeFlag: any
+setActiveFlag: any
 }
 
-// https://www.freecodecamp.org/news/build-a-countdown-timer-with-react-step-by-step/
-export default function Countdown({stateVar, setStateVar}: CountdownProps){
+
+/// ARGGGGGGHGHGHHGHGHG WHY GOD
+// https://stackoverflow.com/questions/53024496/state-not-updating-when-using-react-state-hook-within-setinterval
+export default function Countdown({activeFlag, setActiveFlag}: CountdownProps){
   const [time, setTime] = useState(10);
 
-// THIS IS BASIC BUT WORKS, CHECK OUT FIXING PADDING EFFORT AND CHECKING OUT SETINTERVAL IN GREATER DETAIL
 
   useEffect(() => {
-    let timer = setInterval(() => {
-      setTime((time) => {
-        if (time === 0) {
-          clearInterval(timer);
-          return 0;
-        } else return time - 1;
-      });
-    }, 1000);
-  }, []);
+    time > 0 && activeFlag === true && setTimeout(() => setTime(time - 1), 1000)
+    if (time === 0){
+      console.log("Timer has ended! Call a function to change timerFlag to hide this element and the currency conversion value")
+      setActiveFlag(false)
+    }
+  },[time]);
 
+  // Todo, add text padding to returned time element so you have a tasteful minutes and seconds addition
+  // Todo, could also standardise this into just using the 'showCurrencyFlag'
   return (
-    <div className="App">
+    <AnimatePresence>
+    { activeFlag &&
+    <motion.div className="counter" exit={{opacity: 0}}>
       <p>
-        Time left: {`${Math.floor(time / 60)}`.padStart(2, 0)}:
-        {`${time % 60}`.padStart(2, 0)}
+        
+          Time left: {time}
+        
       </p>
-    </div>
+    </motion.div>
+  }
+    </AnimatePresence>
   );
 }

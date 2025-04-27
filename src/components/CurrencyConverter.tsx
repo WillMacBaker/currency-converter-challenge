@@ -234,19 +234,25 @@ const EXCHANGE_API_KEY = process.env.REACT_APP_EXCHANGE_RATE_KEY
 export default function CurrencyConverter() {
   const [currencyValue, setCurrencyValue] = useState('')
   const [convertedCurrency, setConvertedCurrency] = useState('')
+
   const [selectedCountry, setSelectedCountry] = useState("USD")
   const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
+
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
+  const [countDownFlag, setCountDownFlag] = useState(true)
   const [matchCountryError, setMatchCountryError] = useState<boolean>(false)
   const [showCurrency, setShowCurrency] = useState<boolean>(false)
   const [selectedDecimalCount, setSelectedDecimalCount] = useState<number>(1)
+  
 
 
   // Whenever any of the two country dropdown boxes are selected, checK and compare both using
-  // the compareCountries() function.
+  // the compareCountries() function. Also reset and set the countdownflag to false, which will hide the
+  // returned elements, and also feed down into the Countdown component, which will stop using it's useEffect
   useEffect(() => {
     compareCountries()
     setShowCurrency(false);
+    setCountDownFlag(false);
   }, [selectedCountry, secondSelectedCountry, currencyValue])
   /* 
 
@@ -319,6 +325,7 @@ export default function CurrencyConverter() {
   const calcCurrency = (value: number, multiplier: number) => {
     const tempConvertedCurrency = value * multiplier
     setShowCurrency(true)
+    setCountDownFlag(true)
     const stringValue = `${tempConvertedCurrency}`
     return stringValue
   }
@@ -484,7 +491,7 @@ export default function CurrencyConverter() {
         </StyledDivider>
         <StyledDivider id="show-converted-currency-div">
           {
-            showCurrency &&
+            countDownFlag &&
             <StyledDivider>
               <StyledText fontSize={'18'}>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
             </StyledDivider>
@@ -492,9 +499,9 @@ export default function CurrencyConverter() {
         </StyledDivider>
         
           {
-            showCurrency &&
+            countDownFlag &&
             <StyledDivider>
-              <Countdown stateVar={showCurrency} setStateVar={setShowCurrency}/>
+              <Countdown activeFlag={countDownFlag} setActiveFlag={setCountDownFlag}/>
             </StyledDivider>
           }
         

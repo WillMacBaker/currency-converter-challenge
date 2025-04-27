@@ -6,7 +6,7 @@ import TastefulSVGRectangle from './components/UI/TastefulSVGRectangle';
 export default function App() {
 
   // declare react useStates here, and any variables to be passed down
-  const [currency, setCurrency] = useState();
+
 
   // IN HERE, HANDLE LOGIC FOR CURRENCY CONVERSION.
   
