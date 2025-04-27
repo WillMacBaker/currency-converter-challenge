@@ -9,8 +9,6 @@ setActiveFlag: any
 }
 
 
-/// ARGGGGGGHGHGHHGHGHG WHY GOD
-// https://stackoverflow.com/questions/53024496/state-not-updating-when-using-react-state-hook-within-setinterval
 export default function Countdown({activeFlag, setActiveFlag}: CountdownProps){
   const [time, setTime] = useState(10);
 

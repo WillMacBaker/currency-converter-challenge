@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import {  useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import {AiOutlineSwap} from "react-icons/ai"
 import Dropdown from './Dropdown';
 import { IconBaseProps } from 'react-icons';
@@ -208,7 +208,7 @@ const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
 `
 
 
-const StyledDivider = styled.div`
+const StyledDivider = styled(motion.div)`
   display: flex;
   flex-wrap: wrap;
   margin: auto;
@@ -489,22 +489,22 @@ export default function CurrencyConverter() {
           <Dropdown stateVar={updateSelectedCountry} value={selectedCountry}/>
           <Dropdown stateVar={updateSecondSelectedCountry} value={secondSelectedCountry}/>
         </StyledDivider>
-        <StyledDivider id="show-converted-currency-div">
-          {
-            countDownFlag &&
-            <StyledDivider>
-              <StyledText fontSize={'18'}>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
-            </StyledDivider>
-          }
-        </StyledDivider>
-        
-          {
-            countDownFlag &&
-            <StyledDivider>
-              <Countdown activeFlag={countDownFlag} setActiveFlag={setCountDownFlag}/>
-            </StyledDivider>
-          }
-        
+        <AnimatePresence>
+            {
+              countDownFlag &&
+              <StyledDivider key='converted-currency-div' id="show-converted-currency-div" initial={{opacity: 0, scale: 0}} animate={{opacity: 1, scale: 1}} exit={{opacity: 0}}>
+                <StyledText fontSize={'18'}>{currencyValue} in {selectedCountry} is equivalent to {convertedCurrency} in {secondSelectedCountry} </StyledText>
+              </StyledDivider>
+            }
+        </AnimatePresence>
+        <AnimatePresence>
+            {
+              countDownFlag &&
+              <StyledDivider key='countdown-div' initial={{opacity: 0, scale: 0}} animate={{opacity: 1, scale: 1}} exit={{opacity: 0}}>
+                <Countdown key='countdown-component' activeFlag={countDownFlag} setActiveFlag={setCountDownFlag}/>
+              </StyledDivider>
+            }
+          </AnimatePresence>
         <StyledDivider id="convert-currency-button-div">
             <StyledButton onClick={makeCurrencyAPIRequest} id="inputButton" activeFlag={errorFlag}>Convert</StyledButton>
         </StyledDivider>
