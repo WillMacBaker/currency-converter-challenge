@@ -1,6 +1,7 @@
 
 
 .tasteful-box {
+  min-width: 400px;
   width: 100vw;
   height: 100vw;
 }
