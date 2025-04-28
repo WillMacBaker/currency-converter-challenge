@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/currency-converter-challenge/static/css/main.2a6e6df5.css",
+    "main.js": "/currency-converter-challenge/static/js/main.5a53a4ac.js",
+    "static/js/453.885f4e45.chunk.js": "/currency-converter-challenge/static/js/453.885f4e45.chunk.js",
+    "index.html": "/currency-converter-challenge/index.html",
+    "main.2a6e6df5.css.map": "/currency-converter-challenge/static/css/main.2a6e6df5.css.map",
+    "main.5a53a4ac.js.map": "/currency-converter-challenge/static/js/main.5a53a4ac.js.map",
+    "453.885f4e45.chunk.js.map": "/currency-converter-challenge/static/js/453.885f4e45.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2a6e6df5.css",
+    "static/js/main.5a53a4ac.js"
+  ]
+}
