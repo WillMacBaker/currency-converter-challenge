@@ -1,6 +1,7 @@
 {
   "name": "currency-converter-challenge",
   "version": "0.1.0",
+  "homepage": "https://WillMacBaker.github.io/currency-converter-challenge",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -11,6 +12,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "gh-pages": "^6.3.0",
     "motion": "^12.5.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
@@ -24,6 +26,8 @@
   "scripts": {
     "start": "set port=4000 && react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
