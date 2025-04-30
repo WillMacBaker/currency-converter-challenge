@@ -232,7 +232,7 @@ export default function CurrencyConverter() {
   const [convertedCurrency, setConvertedCurrency] = useState('')
 
   const [selectedCountry, setSelectedCountry] = useState("USD")
-  const [secondSelectedCountry, setSecondSelectedCountry] = useState("USD")
+  const [secondSelectedCountry, setSecondSelectedCountry] = useState("GBP")
 
   const [errorFlag, setErrorFlag] = useState<boolean>(false)
   const [countDownFlag, setCountDownFlag] = useState(true)
