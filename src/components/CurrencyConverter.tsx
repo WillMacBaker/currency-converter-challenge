@@ -199,11 +199,9 @@ const StyledInput = styled(motion.input)<{activeFlag?: boolean}>`
    // outline: 1px solid #E8793F;
     box-shadow: 5px 5px 0 #000, 10px 10px 0 #E8793F;
 
-  &:invalid {
-    border: 5px solid red;
-  }
-
-  
+    &:invalid {
+      border: 5px solid red;
+    }
   }
 `
 
@@ -216,8 +214,6 @@ const StyledDivider = styled(motion.div)`
   align-items: center;
   width: 100%;
   max-width: 100%;
-  
-  
 `
 
 const StyledAppContainer = styled(motion.div)`
@@ -254,44 +250,17 @@ export default function CurrencyConverter() {
     setShowCurrency(false);
     setCountDownFlag(false);
   }, [selectedCountry, secondSelectedCountry, currencyValue])
-  /* 
+   
 
-  3. Create reusable dropdown component
-    // Dropdown will have all available currencies from api <DONE>
-    3a. Dropdown will include a search input for user to filter out options
-    3b. Search input will require correct validation if no record is found (regex + error handling?)
-    3c. Images loaded and shown on the side of the currency
-
-    // To meet 3a and 3b, look to example provided in https://incoderweb.blogspot.com/2022/04/custom-select-input-with-search-option.html
-  
-  4. Convert button
-    4a. Conversion button will convert amount entered, and display it below in string format "VALUE first currency is equal to VALUE second currency
-    4b. A countdown timer starting from 10 00, and once counted down, then show the conversion result, hiding the timer once the value hits 0
-
-  Application should be written in react BONUS if in typescript
-  README should detail how to run and use the application
-  There should be UNIT TESTS (use Chai testing here)
-  Application should be tested in chrome, but also test in IE11, Firefox, Safari
-  Add other things as appropriate. (Background flag design changes based on currency selected?
-
-  Code should be clean, modular and extensible, being responsive and accessible
-  
-  )
-  */
+  // Todo: Bonus items (adding flags to dropdown, making dropdown searchable) need doing
+  // Adding case handling for if api request doesn't find anyuthing (Salvadorean Colon, for example, fail)
+  // Handling text response if one of the currency values return NaN (check why? Too high? Way too low?)
 
   // Country flag api 
   // https://flagpedia.net/download/api
 
   // Country full name
   // https://openexchangerates.org/api/currencies.json
-
-  // Regex for currency 
-  // ^\$(0|[1-9][0-9]{0,2})(,\d{3})*(\.\d{1,2})?$
-  // taken from  https://regexr.com/3ivk1
-
-  // If currencyvalue contains an actual number, then do the below requiest
-  // otherwise throw error and alert user.
- // if ()
 
 
   // Function here returns a true or false boolean, depending on result
@@ -333,7 +302,9 @@ export default function CurrencyConverter() {
   // Lets you customise the number of rounding places you can
   // use when returning a number. Better method would be able
   // to call this function using a state variable, and have that
-  // update based on a dropdown? :)
+  // update based on a dropdown? :) Also have this function rerun whenever you change dropdown
+  // value, so that you aren't reliant on hitting convert button, and making another API call,
+  // and also propogate this down so that currency returned number updates too?
   const returnRoundedValue = (value: number, places: number) => {
     let mult = parseInt("1" + "0".repeat(places))
     console.log("value", value)
@@ -375,7 +346,7 @@ export default function CurrencyConverter() {
         
       })
     }
-      
+    // Todo, best practice would be to add handling case here, this is where I'd put in error handling for invalid countries
     // else {
       // Handling here or elsewhere for invalid numbers? :o
       //alert("Please enter a search term!")
