@@ -14,7 +14,7 @@ const TimerContainer = styled(motion.div)`
   max-width: 100%;
   font-family: monospace;
   padding: 10px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #000;
   background-color: #fff;
